@@ -82,14 +82,6 @@ while getopts "i:m:c:" opt; do
     esac
 done
 
-# Exibe quais valores estao sendo usados
-echo ""
-echo -e "${GREEN}Configuracao do ataque:${NC}"
-echo -e "  Interface: ${CYAN}$INTERFACE${NC}"
-echo -e "  MAC alvo:  ${CYAN}$BSSID${NC}"
-echo -e "  Canal:     ${CYAN}$CHANNEL${NC}"
-echo ""
-
 if [ "$ARGS_PASSED" = false ]; then
     echo -e "${YELLOW}[!] Nenhum argumento fornecido. Usando valores padrao.${NC}"
     echo -e "${YELLOW}[!] Para mudar, use: $0 -i <interface> -m <MAC> -c <canal>${NC}"
