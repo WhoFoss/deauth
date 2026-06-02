@@ -1,3 +1,3 @@
 ```
-sudo ./deauth.sh -i &lt;interface> -m &lt;MAC_do_AP> -c &lt;canal>
+sudo ./deauth.sh -i <interface> -m <MAC_do_AP> -c <canal>
 ```
