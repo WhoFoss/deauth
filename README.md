@@ -1,6 +1,9 @@
+### Formas de uso:
 ```
 sudo ./deauth.sh -i <interface> -m <MAC_do_AP> -c <canal>
 ```
+---
+
 ### Aviso
 
 > Este script não foi criado para fins prejudiciais.
