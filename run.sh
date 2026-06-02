@@ -12,13 +12,21 @@ CYAN=$'\033[0;36m'
 WHITE=$'\033[1;37m'
 NC=$'\033[0m'
 
+# ============================================
+# VALORES PADRAO
+# ============================================
+DEFAULT_INTERFACE="wlx90de807bb027"
+DEFAULT_BSSID="00:00:00:00:00:00"
+DEFAULT_CHANNEL="6"
+# ============================================
+
 pause() {
-read -r -p "${GREEN} Pressione Enter para iniciar...${NC}"
+    read -r -p "${GREEN} Pressione Enter para iniciar...${NC}"
 }
 
 # Funcao para imprimir o logo
 print_logo() {
-clear
+    clear
     echo -e "${RED}"
     echo " ██████╗ ███████╗ █████╗ ██╗   ██╗████████╗██╗  ██╗"
     echo " ██╔══██╗██╔════╝██╔══██╗██║   ██║╚══██╔══╝██║  ██║"
@@ -28,8 +36,9 @@ clear
     echo " ╚═════╝ ╚══════╝╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝"
     echo -e "${NC}"
 }
+
 scan-redes() {
-xterm -T "Scaneando Redes" -geometry 111x24+1766+200 -hold -e sudo airodump-ng wlx90de807bb027
+    xterm -T "Scaneando Redes" -geometry 111x24+1766+200 -hold -e sudo airodump-ng "$DEFAULT_INTERFACE"
 }
 
 # Verifica se é root
@@ -47,34 +56,51 @@ if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
     echo -e "${CYAN}  -i   Interface Wi-Fi (ex: wlan0, wlx...)${NC}"
     echo -e "${CYAN}  -m   MAC address do AP alvo${NC}"
     echo -e "${CYAN}  -c   Canal onde o AP esta operando${NC}"
+    echo ""
+    echo -e "${YELLOW}Valores padrao atuais:${NC}"
+    echo -e "  Interface: ${GREEN}$DEFAULT_INTERFACE${NC}"
+    echo -e "  MAC: ${GREEN}$DEFAULT_BSSID${NC}"
+    echo -e "  Canal: ${GREEN}$DEFAULT_CHANNEL${NC}"
     exit 0
 fi
 
-# Inicializa variaveis
-INTERFACE=""
-BSSID=""
-CHANNEL=""
+# Inicializa variaveis com os valores padrao
+INTERFACE="$DEFAULT_INTERFACE"
+BSSID="$DEFAULT_BSSID"
+CHANNEL="$DEFAULT_CHANNEL"
 
-# Parse dos argumentos
+# Flag para verificar se algum argumento foi passado
+ARGS_PASSED=false
+
+# Parse dos argumentos (sobrescreve os padroes)
 while getopts "i:m:c:" opt; do
     case $opt in
-        i) INTERFACE="$OPTARG" ;;
-        m) BSSID="$OPTARG" ;;
-        c) CHANNEL="$OPTARG" ;;
+        i) INTERFACE="$OPTARG"; ARGS_PASSED=true ;;
+        m) BSSID="$OPTARG"; ARGS_PASSED=true ;;
+        c) CHANNEL="$OPTARG"; ARGS_PASSED=true ;;
         *) echo -e "${RED}Opcao invalida. Use -h para ajuda.${NC}"; exit 1 ;;
     esac
 done
 
-# Verifica se todos os parametros foram fornecidos
-if [ -z "$INTERFACE" ] || [ -z "$BSSID" ] || [ -z "$CHANNEL" ]; then
-    echo -e "${RED}Erro: Interface, MAC e canal sao obrigatorios.${NC}"
-    echo -e "${WHITE}Exemplo: $0 -i wlan0 -m AA:BB:CC:DD:EE:FF -c 6${NC}"
-    exit 1
+# Exibe quais valores estao sendo usados
+echo ""
+echo -e "${GREEN}Configuracao do ataque:${NC}"
+echo -e "  Interface: ${CYAN}$INTERFACE${NC}"
+echo -e "  MAC alvo:  ${CYAN}$BSSID${NC}"
+echo -e "  Canal:     ${CYAN}$CHANNEL${NC}"
+echo ""
+
+if [ "$ARGS_PASSED" = false ]; then
+    echo -e "${YELLOW}[!] Nenhum argumento fornecido. Usando valores padrao.${NC}"
+    echo -e "${YELLOW}[!] Para mudar, use: $0 -i <interface> -m <MAC> -c <canal>${NC}"
+    echo ""
 fi
 
 # Verifica se a interface existe
 if ! ip link show "$INTERFACE" > /dev/null 2>&1; then
     echo -e "${RED}Erro: Interface $INTERFACE nao encontrada.${NC}"
+    echo -e "${YELLOW}Interfaces disponiveis:${NC}"
+    ip link show | grep -E '^[0-9]+:' | awk -F': ' '{print $2}'
     exit 1
 fi
 
