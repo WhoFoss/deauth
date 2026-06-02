@@ -1,6 +1,6 @@
 ### Formas de uso:
 ```
-sudo bash run.sh -i <interface> -m <MAC_do_AP> -c <canal>
+./run.sh -i <interface> -m <MAC_do_AP> -c <canal>
 ```
 ---
 
