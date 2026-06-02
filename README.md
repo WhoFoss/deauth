@@ -1,6 +1,6 @@
 ### Formas de uso:
 ```
-sudo ./deauth.sh -i <interface> -m <MAC_do_AP> -c <canal>
+sudo bash run.sh -i <interface> -m <MAC_do_AP> -c <canal>
 ```
 ---
 
